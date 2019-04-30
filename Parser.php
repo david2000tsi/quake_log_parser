@@ -127,4 +127,53 @@ class Parser
 
 		return $players;
 	}
+
+	// Returns information from one kill (one line from match).
+	// string $kill A single line containing a kill.
+	// Return an array with the killer, killed and killmode.
+	public function getWhoKillWho(string $kill)
+	{
+		$killer = "";
+		$killed = "";
+		$killMode = "";
+
+		if(!strlen($kill))
+		{
+			return false;
+		}
+
+		// 22:06 Kill: 2 3 7: Isgalamido killed Mocinha by MOD_ROCKET_SPLASH
+		$position = strpos($kill, " killed ");
+		if($position)
+		{
+			// Gets the killer...
+			$positionTmp = strrpos($kill, ":");
+			$positionTmp += 2;
+
+			for($i = 0; $positionTmp < $position; $i++)
+			{
+				$killer[$i] = $kill[$positionTmp++];
+			}
+
+			// Gets the killed.
+			$position += strlen(" killed ");
+
+			$positionTmp = strpos($kill, " by ");
+			for($i = 0; $position < $positionTmp; $i++)
+			{
+				$killed[$i] = $kill[$position++];
+			}
+
+			$positionTmp += 4; // Adding two bytes ( by ).
+
+			for($i = 0; $positionTmp < strlen($kill); $i++)
+			{
+				$killMode[$i] = $kill[$positionTmp++];
+			}
+
+			return array("killer" => $killer, "killed" => $killed, "killMode" => $killMode);
+		}
+
+		return false;
+	}
 }

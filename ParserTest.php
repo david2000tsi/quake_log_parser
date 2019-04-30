@@ -65,4 +65,25 @@ final class ParserTest extends TestCase
 			$this->assertEquals($type, "array");
 		}
 	}
+
+	// Gets kill information from one kill (line from log).
+	public function testGetKillsInfo()
+	{
+		$matchList = $this->parser->getMatchList();
+		if(count($matchList))
+		{
+			$kills = $this->parser->getKillsFromMatch($matchList[5]);
+			$type = gettype($matchList);
+
+			$this->assertEquals($type, "array");
+
+			if(count($kills))
+			{
+				$killInfo = $this->parser->getWhoKillWho($kills[0]);
+				$type = gettype($killInfo);
+
+				$this->assertEquals($type, "array");
+			}
+		}
+	}
 }
