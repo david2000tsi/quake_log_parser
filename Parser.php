@@ -186,11 +186,42 @@ class Parser
 		return false;
 	}
 
+	private function isValidPlayer($player)
+	{
+		// It is not a player...
+		if($player == "totalKills" || $player == self::LOG_KEY_PLAYER_WORLD)
+		{
+			return false;
+		}
+		return true;
+	}
+
+	private function isValidKillScore(array $ranking)
+	{
+		$allKills = $ranking["totalKills"];
+		$playerKills = 0;
+
+		// The sum of all players kills will be equal to totalKills.
+		// Lets go to sum all players kills and the <world> kills, but when <world> kill someone the countage of player that was killed is decremented.
+		// So we should mutiplicate <world> countage per two.
+		foreach($ranking as $player => $kills)
+		{
+			if($this->isValidPlayer($player))
+			{
+				$playerKills += $kills;
+			}
+		}
+
+		$playerKills += ($ranking[self::LOG_KEY_PLAYER_WORLD] * 2);
+
+		return ($allKills == $playerKills);
+	}
+
 	// Gets the kill score from match.
 	// string $kill A single line containing a kill.
 	// Returns an array with the score or false case error.
 	// Output example (using print_r() function):
-	// array(5) {
+	// array(6) {
 	//   ["Dono da Bola"]=>
 	//   int(-1)
 	//   ["Mocinha"]=>
@@ -199,6 +230,8 @@ class Parser
 	//   int(1)
 	//   ["Zeh"]=>
 	//   int(-2)
+	//   ["<world>"]=>
+	//   int(3)
 	//   ["totalKills"]=>
 	//   int(4)
 	// }
@@ -223,6 +256,9 @@ class Parser
 			$ranking[$player] = 0;
 		}
 
+		// Lets go to save the <world> kills...
+		$ranking[self::LOG_KEY_PLAYER_WORLD] = 0;
+
 		foreach($kills as $kill)
 		{
 			$killInfo = $this->getWhoKillWho($kill);
@@ -233,6 +269,7 @@ class Parser
 				if($killInfo["killer"] == self::LOG_KEY_PLAYER_WORLD)
 				{
 					$ranking[$killInfo["killed"]]--;
+					$ranking[self::LOG_KEY_PLAYER_WORLD]++;
 				}
 				else
 				{
@@ -241,7 +278,14 @@ class Parser
 				$totalKills++;
 			}
 		}
+		// It is not a player, is just the kills countage.
 		$ranking["totalKills"] = $totalKills;
+
+		if(!$this->isValidKillScore($ranking))
+		{
+			// Invalid countage...
+			return false;
+		}
 
 		return $ranking;
 	}
@@ -273,14 +317,11 @@ class Parser
 		$killScoreJson["total_kills"] = $killScore["totalKills"];
 		foreach($killScore as $player => $kills)
 		{
-			// It is not a player...
-			if($player == "totalKills")
+			if($this->isValidPlayer($player))
 			{
-				continue;
+				array_push($killScoreJson["players"], $player);
+				$killScoreJson["kills"][$player] = $kills;
 			}
-
-			array_push($killScoreJson["players"], $player);
-			$killScoreJson["kills"][$player] = $kills;
 		}
 
 		$ResultJson = json_encode($killScoreJson, $jsonOutputMode);

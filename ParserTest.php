@@ -48,8 +48,6 @@ final class ParserTest extends TestCase
 			$type = gettype($kills);
 
 			$this->assertEquals($type, "array");
-
-			//var_dump($kills);
 		}
 	}
 
