@@ -176,4 +176,89 @@ class Parser
 
 		return false;
 	}
+
+	// Gets the kill score from match.
+	// string $kill A single line containing a kill.
+	// Returns an array with the score or false case error.
+	public function getKillScore(array $match)
+	{
+		$players = array();
+		$kills = array();
+		$ranking = array();
+		$totalKills = 0;
+
+		if(count($match) == 0)
+		{
+			return false;
+		}
+
+		$players = $this->getPlayersFromMatch($match);
+		$kills = $this->getKillsFromMatch($match);
+
+		foreach($players as $player)
+		{
+			$ranking[$player] = 0;
+		}
+
+		foreach($kills as $kill)
+		{
+			$killInfo = $this->getWhoKillWho($kill);
+
+			if($killInfo)
+			{
+				// We will increment each player kill, but if the player was killed by '<world>' his countage will be decremented.
+				if($killInfo["killer"] == "<world>")
+				{
+					$ranking[$killInfo["killed"]]--;
+				}
+				else
+				{
+					$ranking[$killInfo["killer"]]++;
+				}
+				$totalKills++;
+			}
+			$ranking["totalKills"] = $totalKills;
+		}
+
+		return $ranking;
+	}
+
+	// Gets the kill score from match in json format.
+	// string $kill A single line containing a kill.
+	// Returns a json string with the score or false case error.
+	public function getKillScoreJson(array $match, string $title = "game")
+	{
+		$killScoreJson = array("total_kills" => 0, "players" => array(), "kills" => null);
+		$killScore = $this->getKillScore($match);
+
+		if(count($killScore) == 0)
+		{
+			return false;
+		}
+
+		// Output example:
+		// game_1: {
+		//     total_kills: 45;
+		//     players: ["Dono da bola", "Isgalamido", "Zeh"]
+		//     kills: {
+		//       "Dono da bola": 5,
+		//       "Isgalamido": 18,
+		//       "Zeh": 20
+		//     }
+		// }
+		$killScoreJson["total_kills"] = isset($killScore["totalKills"]) ? $killScore["totalKills"] : 0;
+		foreach($killScore as $player => $kills)
+		{
+			if($player == "totalKills")
+			{
+				continue;
+			}
+
+			array_push($killScoreJson["players"], $player);
+			$killScoreJson["kills"][$player] = $kills;
+		}
+
+		$result = array($title => $killScoreJson);
+		return json_encode($result, JSON_PRETTY_PRINT);
+	}
 }
