@@ -17,6 +17,7 @@ class Database
 	private static $connServer;
 	private static $connDatabase;
 	private static $instance;
+	private $lastInsertId;
 
 	private function __construct()
 	{
@@ -48,6 +49,11 @@ class Database
 		return self::$instance;
 	}
 
+	public function getLastInsertId()
+	{
+		return $this->lastInsertId;
+	}
+
 	// Execute a query.
 	// string $query The query to be executed.
 	// Returns true case success or false case error.
@@ -59,6 +65,8 @@ class Database
 		{
 			$stm = self::$connDatabase->prepare($query);
 			$result = $stm->execute();
+
+			$this->lastInsertId = self::$connDatabase->lastInsertId();
 		}
 		catch(PDOException $e)
 		{
