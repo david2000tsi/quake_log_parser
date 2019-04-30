@@ -15,8 +15,6 @@ final class DatabaseTest extends TestCase
 	{
 		$instance = Database::getInstance();
 
-		var_dump($instance);
-
 		$this->assertEquals($instance instanceof Database, true);
 	}
 
