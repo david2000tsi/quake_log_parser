@@ -189,6 +189,19 @@ class Parser
 	// Gets the kill score from match.
 	// string $kill A single line containing a kill.
 	// Returns an array with the score or false case error.
+	// Output example (using print_r() function):
+	// array(5) {
+	//   ["Dono da Bola"]=>
+	//   int(-1)
+	//   ["Mocinha"]=>
+	//   int(0)
+	//   ["Isgalamido"]=>
+	//   int(1)
+	//   ["Zeh"]=>
+	//   int(-2)
+	//   ["totalKills"]=>
+	//   int(4)
+	// }
 	public function getKillScore(array $match)
 	{
 		$players = array();
@@ -227,8 +240,8 @@ class Parser
 				}
 				$totalKills++;
 			}
-			$ranking["totalKills"] = $totalKills;
 		}
+		$ranking["totalKills"] = $totalKills;
 
 		return $ranking;
 	}
@@ -257,7 +270,7 @@ class Parser
 		//       "Zeh": 20
 		//     }
 		// }
-		$killScoreJson["total_kills"] = isset($killScore["totalKills"]) ? $killScore["totalKills"] : 0;
+		$killScoreJson["total_kills"] = $killScore["totalKills"];
 		foreach($killScore as $player => $kills)
 		{
 			// It is not a player...
