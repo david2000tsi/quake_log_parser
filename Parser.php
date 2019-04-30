@@ -8,6 +8,7 @@ class Parser
 	CONST LOG_KEY_SHUTDOWN_GAME = "ShutdownGame";
 	CONST LOG_KEY_KILL = "Kill";
 	CONST LOG_KEY_PLAYER = "ClientUserinfoChanged";
+	CONST LOG_KEY_PLAYER_WORLD = "<world>";
 
 	private $logArr;
 
@@ -44,21 +45,25 @@ class Parser
 			return false;
 		}
 
+		// Get list of matchs from log file.
 		foreach($this->logArr as $line)
 		{
 			if(strpos($line, self::LOG_KEY_INIT_GAME))
 			{
+				// Match is opened, lets to to start.
 				$isGameOpened = true;
 				$matchList[$currentMatchIndex] = array();
 			}
 
 			if($isGameOpened)
 			{
+				// While match is opened we will store lines...
 				array_push($matchList[$currentMatchIndex], $line);
 			}
 
 			if(strpos($line, self::LOG_KEY_SHUTDOWN_GAME))
 			{
+				// Match finish, lets to to stop.
 				$isGameOpened = false;
 				$currentMatchIndex++;
 			}
@@ -79,6 +84,7 @@ class Parser
 			return false;
 		}
 
+		// Read all match to recover only kill entries.
 		foreach($match as $line)
 		{
 			if(strpos($line, self::LOG_KEY_KILL))
@@ -106,6 +112,7 @@ class Parser
 		{
 			if(strpos($line, self::LOG_KEY_PLAYER))
 			{
+				// Player example:
 				// "3:32 ClientUserinfoChanged: 2 n\Oootsimo\t\0\model\razor/id\hmodel\razor/id\g_redteam\\g_blueteam\\c1\3\c2\5\hc\100\w\0\l\0\tt\0\tl\0"
 				//  strpos returns 30             ^
 				// We need to recover only 'Oootsimo' from string.
@@ -142,11 +149,12 @@ class Parser
 			return false;
 		}
 
+		// Kill example:
 		// 22:06 Kill: 2 3 7: Isgalamido killed Mocinha by MOD_ROCKET_SPLASH
 		$position = strpos($kill, " killed ");
 		if($position)
 		{
-			// Gets the killer...
+			// Gets the killer player...
 			$positionTmp = strrpos($kill, ":");
 			$positionTmp += 2;
 
@@ -155,7 +163,7 @@ class Parser
 				$killer[$i] = $kill[$positionTmp++];
 			}
 
-			// Gets the killed.
+			// Gets the killed player...
 			$position += strlen(" killed ");
 
 			$positionTmp = strpos($kill, " by ");
@@ -164,8 +172,9 @@ class Parser
 				$killed[$i] = $kill[$position++];
 			}
 
-			$positionTmp += 4; // Adding two bytes ( by ).
+			$positionTmp += 4; // Adding four bytes ( by ).
 
+			// Gets the kill mode...
 			for($i = 0; $positionTmp < strlen($kill); $i++)
 			{
 				$killMode[$i] = $kill[$positionTmp++];
@@ -197,6 +206,7 @@ class Parser
 
 		foreach($players as $player)
 		{
+			// Lets go to create an array with each key is player name and value is the kills quantity.
 			$ranking[$player] = 0;
 		}
 
@@ -207,7 +217,7 @@ class Parser
 			if($killInfo)
 			{
 				// We will increment each player kill, but if the player was killed by '<world>' his countage will be decremented.
-				if($killInfo["killer"] == "<world>")
+				if($killInfo["killer"] == self::LOG_KEY_PLAYER_WORLD)
 				{
 					$ranking[$killInfo["killed"]]--;
 				}
@@ -226,10 +236,11 @@ class Parser
 	// Gets the kill score from match in json format.
 	// string $kill A single line containing a kill.
 	// Returns a json string with the score or false case error.
-	public function getKillScoreJson(array $match, string $title = "game")
+	public function getKillScoreJson(array $match, string $title = "game_1", $jsonOutputMode = JSON_PRETTY_PRINT)
 	{
 		$killScoreJson = array("total_kills" => 0, "players" => array(), "kills" => null);
 		$killScore = $this->getKillScore($match);
+		$ResultJson = "";
 
 		if(count($killScore) == 0)
 		{
@@ -249,6 +260,7 @@ class Parser
 		$killScoreJson["total_kills"] = isset($killScore["totalKills"]) ? $killScore["totalKills"] : 0;
 		foreach($killScore as $player => $kills)
 		{
+			// It is not a player...
 			if($player == "totalKills")
 			{
 				continue;
@@ -258,7 +270,9 @@ class Parser
 			$killScoreJson["kills"][$player] = $kills;
 		}
 
-		$result = array($title => $killScoreJson);
-		return json_encode($result, JSON_PRETTY_PRINT);
+		$ResultJson = json_encode($killScoreJson, $jsonOutputMode);
+		$ResultJson = $title.": ".$ResultJson;
+
+		return $ResultJson;
 	}
 }
