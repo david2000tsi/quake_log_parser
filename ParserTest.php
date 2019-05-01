@@ -110,4 +110,30 @@ final class ParserTest extends TestCase
 			$this->assertEquals($type, "string");
 		}
 	}
+
+	// Gets the kill score by kill mode from match.
+	public function testGetKillScoreByKillMode()
+	{
+		$matchList = $this->parser->getMatchList();
+		if(count($matchList))
+		{
+			$killScoreByMode = $this->parser->getKillScoreByKillMode($matchList[5]);
+			$type = gettype($killScoreByMode);
+
+			$this->assertEquals($type, "array");
+		}
+	}
+
+	// Gets the kill score by kill mode from match in json format.
+	public function testGetKillScoreByKillModeJson()
+	{
+		$matchList = $this->parser->getMatchList();
+		if(count($matchList))
+		{
+			$killScoreByMode = $this->parser->getKillScoreByKillModeJson($matchList[5]);
+			$type = gettype($killScoreByMode);
+
+			$this->assertEquals($type, "string");
+		}
+	}
 }

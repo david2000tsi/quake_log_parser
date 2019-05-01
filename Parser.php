@@ -10,6 +10,38 @@ class Parser
 	CONST LOG_KEY_PLAYER = "ClientUserinfoChanged";
 	CONST LOG_KEY_PLAYER_WORLD = "<world>";
 
+	CONST KILL_MODES = array(
+		'MOD_UNKNOWN',
+		'MOD_SHOTGUN',
+		'MOD_GAUNTLET',
+		'MOD_MACHINEGUN',
+		'MOD_GRENADE',
+		'MOD_GRENADE_SPLASH',
+		'MOD_ROCKET',
+		'MOD_ROCKET_SPLASH',
+		'MOD_PLASMA',
+		'MOD_PLASMA_SPLASH',
+		'MOD_RAILGUN',
+		'MOD_LIGHTNING',
+		'MOD_BFG',
+		'MOD_BFG_SPLASH',
+		'MOD_WATER',
+		'MOD_SLIME',
+		'MOD_LAVA',
+		'MOD_CRUSH',
+		'MOD_TELEFRAG',
+		'MOD_FALLING',
+		'MOD_SUICIDE',
+		'MOD_TARGET_LASER',
+		'MOD_TRIGGER_HURT',
+		'MOD_NAIL',
+		'MOD_CHAINGUN',
+		'MOD_PROXIMITY_MINE',
+		'MOD_KAMIKAZE',
+		'MOD_JUICED',
+		'MOD_GRAPPLE',
+	);
+
 	private $logArr;
 
 	public function __construct()
@@ -330,6 +362,81 @@ class Parser
 		$resultJson = $title.": ".$resultJson;
 
 		return $resultJson;
+	}
 
+	// Gets the kill mode score from match.
+	// array $match An array containing a match.
+	// Returns an array with the score of kill modes or false case error.
+	public function getKillScoreByKillMode(array $match)
+	{
+		$kills = array();
+		$rankingKillModes = array();
+
+		if(count($match) == 0)
+		{
+			return false;
+		}
+
+		// Create an array with all kills modes.
+		foreach(self::KILL_MODES as $killMode)
+		{
+			$rankingKillModes[$killMode] = 0;
+		}
+
+		// Gets all kills from one match.
+		$kills = $this->getKillsFromMatch($match);
+
+		// Count kills modes.
+		foreach($kills as $kill)
+		{
+			$killInfo = $this->getWhoKillWho($kill);
+
+			if($killInfo)
+			{
+				$rankingKillModes[$killInfo["killMode"]]++;
+			}
+		}
+
+		// Removed keys with kill modes that is not used in the match.
+		foreach($rankingKillModes as $killMode => $count)
+		{
+			if($count == 0)
+			{
+				unset($rankingKillModes[$killMode]);
+			}
+		}
+
+		return $rankingKillModes;
+	}
+
+	// Gets the kill mode score from match in json format.
+	// array $match An array containing a match.
+	// string $title The title of json output.
+	// $jsonOutputMode The json output mode.
+	// Returns a string with the score of kill modes or false case error.
+	public function getKillScoreByKillModeJson(array $match, string $title = "game_1", $jsonOutputMode = JSON_PRETTY_PRINT)
+	{
+		$killScoreByKillModeJson = array("kills_by_means" => array());
+		$killScoreByKillMode = $this->getKillScoreByKillMode($match);
+		$resultJson = "";
+
+		// Output example:
+		// "game_1": {
+		// 	kills_by_means: {
+		// 		"MOD_SHOTGUN": 10,
+		// 		"MOD_RAILGUN": 2,
+		// 		"MOD_GAUNTLET": 1,
+		// 		"XXXX": N
+		// 	}
+		// }
+		foreach($killScoreByKillMode as $killMode => $count)
+		{
+			$killScoreByKillModeJson["kills_by_means"][$killMode] = $count;
+		}
+
+		$resultJson = json_encode($killScoreByKillModeJson, $jsonOutputMode);
+		$resultJson = $title.": ".$resultJson;
+
+		return $resultJson;
 	}
 }
