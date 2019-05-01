@@ -175,7 +175,7 @@ class Parser
 			$positionTmp += 4; // Adding four bytes ( by ).
 
 			// Gets the kill mode...
-			for($i = 0; $positionTmp < strlen($kill); $i++)
+			for($i = 0; $positionTmp < strlen($kill) - 1; $i++)
 			{
 				$killMode[$i] = $kill[$positionTmp++];
 			}
@@ -218,7 +218,7 @@ class Parser
 	}
 
 	// Gets the kill score from match.
-	// string $kill A single line containing a kill.
+	// array $match An array containing a match.
 	// Returns an array with the score or false case error.
 	// Output example (using print_r() function):
 	// array(6) {
@@ -291,13 +291,15 @@ class Parser
 	}
 
 	// Gets the kill score from match in json format.
-	// string $kill A single line containing a kill.
+	// array $match An array containing a match.
+	// string $title The title of json output.
+	// $jsonOutputMode The json output mode.
 	// Returns a json string with the score or false case error.
 	public function getKillScoreJson(array $match, string $title = "game_1", $jsonOutputMode = JSON_PRETTY_PRINT)
 	{
 		$killScoreJson = array("total_kills" => 0, "players" => array(), "kills" => null);
 		$killScore = $this->getKillScore($match);
-		$ResultJson = "";
+		$resultJson = "";
 
 		if(count($killScore) == 0)
 		{
@@ -324,9 +326,10 @@ class Parser
 			}
 		}
 
-		$ResultJson = json_encode($killScoreJson, $jsonOutputMode);
-		$ResultJson = $title.": ".$ResultJson;
+		$resultJson = json_encode($killScoreJson, $jsonOutputMode);
+		$resultJson = $title.": ".$resultJson;
 
-		return $ResultJson;
+		return $resultJson;
+
 	}
 }
