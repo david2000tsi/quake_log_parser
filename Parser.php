@@ -333,7 +333,7 @@ class Parser
 		$killScore = $this->getKillScore($match);
 		$resultJson = "";
 
-		if(count($killScore) == 0)
+		if(!$killScore || count($killScore) == 0)
 		{
 			return false;
 		}
@@ -419,6 +419,11 @@ class Parser
 		$killScoreByKillModeJson = array("kills_by_means" => array());
 		$killScoreByKillMode = $this->getKillScoreByKillMode($match);
 		$resultJson = "";
+
+		if(!$killScoreByKillMode || count($killScoreByKillMode) == 0)
+		{
+			return false;
+		}
 
 		// Output example:
 		// "game_1": {
