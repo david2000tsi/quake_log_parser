@@ -1,3 +1,9 @@
+<?php
+	include_once 'utils.php';
+
+	$GLOBALS["list"] = getAllPLayersScore();
+?>
+
 <!doctype html>
 <html>
     <head>
@@ -107,8 +113,9 @@
     	<div class="content">
     		<div class="content_2">
 			    <h2>RANKING</h2>
-				<form>
-		    		<input type="text" class="imp_text" placeholder="Busca por nome">
+				<form id="form">
+					<input type="hidden" id="moderequest" name="moderequest" value="getplayerscore">
+					<input type="text" id="nomejogador" name="nomejogador" class="imp_text" placeholder="Busca por nome">
 		    		<input type="submit" class="imp_submit" value="Buscar">
 		    	</form>
 		    	<br>
@@ -122,17 +129,31 @@
 				        </tr>
 				    </thead>
 				    <tbody>
-				    	<?php for($i=1; $i<=10;) { ?>
-				    		<tr>
-					    		<td class="fl_left td_color_1">Player <?php echo($i++); ?></td>
-					    		<td class="fl_right td_color_1"><?php echo(rand(1, 50)); ?></td>
-					    	</tr>
+				    	<?php
+				    		if(isset($GLOBALS["list"]))
+				    		{
+				    			foreach($GLOBALS["list"] as $chave => $line)
+				    			{
+				    				$player = $line["nome_jogador"];
+				    				$kills = $line["sum_qtd_kills"];
 
-					    	<tr>
-					    		<td class="fl_left td_color_2">Player <?php echo($i++); ?></td>
-					    		<td class="fl_right td_color_2"><?php echo(rand(1, 50)); ?></td>
-					    	</tr>
-				    	<?php } ?>
+				    				if($chave%2==0)
+				    				{
+					    				echo("<tr>");
+					    				echo("<td class='fl_left td_color_1'>$player</td>");
+					    				echo("<td class='fl_right td_color_1'>$kills</td>");
+					    				echo("</tr>");
+					    			}
+					    			else
+					    			{
+					    				echo("<tr>");
+					    				echo("<td class='fl_left td_color_2'>$player</td>");
+					    				echo("<td class='fl_right td_color_2'>$kills</td>");
+					    				echo("</tr>");
+				    				}
+				    			}
+				    		}
+				    	?>
 				    </tbody>
 				    <tfoot>
 				    </tfoot>
@@ -140,5 +161,34 @@
 				<br>
 			</div>
 		</div>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+		<script type="text/javascript">
+			$("#form").submit(function(event){
+			    event.preventDefault();
+			    console.log("Iniciando requisicao...");
+			    var form = $('#form').serialize();
+			    console.log(form);
+			    $.ajax({
+				  method: "POST",
+				  url: "utils.php",
+				  data: form,
+				  dataType: "json",
+				  success: function (data) {
+				  	if($.isEmptyObject(data.error)){
+				  		console.log("Ok!");
+				  		console.log(data);
+				  		alert("O jogador " + data.nome_jogador + " tem " + data.sum_qtd_kills + " kills!");
+				  	}else{
+				  		console.log(data.error);
+				  		alert("Jogador não encontrado no banco de dados!");
+				  	}
+				  },
+				  error: function(data) {
+				  	console.log('Erro na requisicao!!!');
+				  	console.log(data);
+				  }
+				});
+			});
+		</script>
     </body>
 </html>
