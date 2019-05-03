@@ -10,33 +10,33 @@ You should have installed in your computer the PHP, PHPUnit and MySQL to run exa
 
 The Quake log file used by the parser.
 
-### Parser.php
+### src/Parser.php
 
 The php parser for log file.
 
-### ParserTest.php
+### test/ParserTest.php
 
 Unit tests for parser, run tests with:
 
 ```
-cd <project_path>
+cd <project_path>/test
 phpunit ParserTest.php
 ```
 
-### Database.php
+### src/Database.php
 
 The php database class to generate structure and run queries, the connection parameters is in this file.
 
-### database.sql
+### sql/database.sql
 
 The sql scripts used in the Database class (this file is not necessary for Database class).
 
-### DatabaseTest.php
+### test/DatabaseTest.php
 
 Unit tests for database class, run tests with:
 
 ```
-cd <project_path>
+cd <project_path>/test
 phpunit DatabaseTest.php
 ```
 
@@ -57,14 +57,14 @@ Use the following command to save output in txt file:
 php Example.php > output.txt
 ```
 
-### app.php
+### web/index.php
 
 Basic web app to see user list and kill score and find user by name.
 Follow the steps bellow to run app (run Example.php file before to create and populate database):
 
 Change to project path and starts php server:
 ```
-cd <project_path>
+cd <project_path>/web
 php -S <ip>:<port>
 
 ```
@@ -72,9 +72,23 @@ php -S <ip>:<port>
 Open the browser (teste in chrome and forefox) and access with:
 
 ```
-<ip>:<port>/app.php (e.g. localhost:8080/app.php)
+<ip>:<port> (e.g. localhost:8080)
 ```
 
-### utils.php
+### web/utils.php
 
-File used by app.php.
+File used by index.php.
+
+### web/poison.svg
+
+File used by index.php.
+
+### web/template.jpg
+
+File used as template to develop web app.
+
+## The games.log, poison.svg and template.jpg was copied from:
+
+```
+https://gist.github.com/labmorales/7ebd77411ad51c32179bd4c912096031
+```

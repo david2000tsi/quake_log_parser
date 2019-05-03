@@ -1,4 +1,6 @@
 <?php
+	// Opens connection with database.
+	// Returns a valid connection or false case error.
 	function getConn()
 	{
 		$connDatabase = false;
@@ -16,6 +18,8 @@
 		return $connDatabase;
 	}
 
+	// Gets the sum of kills of each player in the database.
+	// Returns a valid array with kills scores or array with 'error' key.
 	function getAllPLayersScore()
 	{
 		$connDatabase = getConn();
@@ -38,6 +42,9 @@
 		return ['error' => 'failed'];
 	}
 
+	// Gets sun of kills of specific player.
+	// $playerName The player name.
+	// Returns a valid array with kill score of informet player or array with 'error' key.
 	function getPlayerScore($playerName)
 	{
 		$connDatabase = getConn();
@@ -65,6 +72,7 @@
 		return ['error' => 'failed'];
 	}
 
+	// Handle post request from player form.
 	if(isset($_POST))
 	{
 		switch($_POST["moderequest"])

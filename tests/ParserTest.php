@@ -1,6 +1,6 @@
 <?php
 
-require_once 'Parser.php';
+require_once(__DIR__.'/../src/Parser.php');
 
 use PHPUnit\Framework\TestCase;
 

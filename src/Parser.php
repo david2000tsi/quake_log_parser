@@ -3,7 +3,7 @@
 class Parser
 {
 	// Constants.
-	CONST LOG_FILE_NAME = "games.log";
+	CONST LOG_FILE_NAME = __DIR__."/../games.log";
 	CONST LOG_KEY_INIT_GAME = "InitGame";
 	CONST LOG_KEY_SHUTDOWN_GAME = "ShutdownGame";
 	CONST LOG_KEY_KILL = "Kill";
@@ -80,7 +80,8 @@ class Parser
 		// Get list of matchs from log file.
 		foreach($this->logArr as $line)
 		{
-			if(strpos($line, self::LOG_KEY_INIT_GAME))
+			// Case there is many 'InitGame' key we will skip until find 'ShutdownGame' key.
+			if(!$isGameOpened && strpos($line, self::LOG_KEY_INIT_GAME))
 			{
 				// Match is opened, lets to to start.
 				$isGameOpened = true;
@@ -163,6 +164,9 @@ class Parser
 
 		// Removing duplicated players.
 		$players = array_unique($players);
+
+		// Ordening players by name (alphabetical order).
+		asort($players);
 
 		return $players;
 	}
@@ -297,6 +301,12 @@ class Parser
 
 			if($killInfo)
 			{
+				// If player kill yourself we will not count it...
+				if($killInfo["killer"] == $killInfo["killed"])
+				{
+					continue;
+				}
+
 				// We will increment each player kill, but if the player was killed by '<world>' his countage will be decremented.
 				if($killInfo["killer"] == self::LOG_KEY_PLAYER_WORLD)
 				{
@@ -405,6 +415,9 @@ class Parser
 				unset($rankingKillModes[$killMode]);
 			}
 		}
+
+		// Ordening kills score in descending order (by quantity).
+		arsort($rankingKillModes);
 
 		return $rankingKillModes;
 	}
