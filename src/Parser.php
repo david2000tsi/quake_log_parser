@@ -3,7 +3,7 @@
 class Parser
 {
 	// Constants.
-	CONST LOG_FILE_NAME = "games.log";
+	CONST LOG_FILE_NAME = __DIR__."/../games.log";
 	CONST LOG_KEY_INIT_GAME = "InitGame";
 	CONST LOG_KEY_SHUTDOWN_GAME = "ShutdownGame";
 	CONST LOG_KEY_KILL = "Kill";
