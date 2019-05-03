@@ -50,3 +50,31 @@ This file will display ranking of kills of each match, generate database structu
 cd <project_path>
 php Example.php
 ```
+
+Use the following command to save output in txt file:
+
+```
+php Example.php > output.txt
+```
+
+### app.php
+
+Basic web app to see user list and kill score and find user by name.
+Follow the steps bellow to run app (run Example.php file before to create and populate database):
+
+Change to project path and starts php server:
+```
+cd <project_path>
+php -S <ip>:<port>
+
+```
+
+Open the browser (teste in chrome and forefox) and access with:
+
+```
+<ip>:<port>/app.php (e.g. localhost:8080/app.php)
+```
+
+### utils.php
+
+File used by app.php.

@@ -39,26 +39,36 @@
 			h2 {
             	text-align: left;
             	background-color: #dadada;
+            	text-shadow: 1px 0 0;
             }
 
             input {
-            	padding: 18px 0px;
+            	padding: 14px 0px;
             	font-size: 18px;
+            	text-shadow: 0.5px 0 0;
             }
 
             .imp_text {
-            	width: 64%;
+            	width: 65%;
             	float: left;
             	background-color: #dadada;
             	color: #646263;
-            	border: 3px solid white;
+            	border-left: 2px solid white;
+            	border-top: 2px solid white;
+            	border-right: 0px solid white;
+            	border-bottom: 2px solid white;
+            	padding-left: 10px;
             }
 
             .imp_submit {
-            	width: 35%;
+            	width: 32.5%;
             	float: right;
             	background-color: #646263;
             	color: #f7a600;
+            	border-left: 2px solid #646263;
+            	border-right: 2px solid #646263;
+            	border-top: 2px solid #646263;
+            	border-bottom: 2px solid #646263;
             }
 
             table {
@@ -67,13 +77,31 @@
             	border-collapse: collapse;
             }
 
-            th, td {
-            	padding: 15px 30px;
-  				text-align: left;
+            th {
+            	padding: 15px 8px;
             }
 
             td {
+            	padding: 22px 8px 5px 8px;
             	color: white;
+            	vertical-align: bottom;
+            	font-size: 21px;
+            }
+
+            .th_color {
+            	background-color: #f7a600;
+            }
+
+            .th_left {
+            	width: 74%;
+				text-align: left;
+				text-shadow: 1px 0 0;
+			}
+
+            .th_right {
+            	width: 20%;
+            	text-align: center;
+            	text-shadow: 1px 0 0;
             }
 
             .td_color_1 {
@@ -84,27 +112,20 @@
             	background: #646263;
             }
 
-            .fl_left {
+            .td_left {
             	width: 60%;
-            	vertical-align: bottom;
 				text-align: left;
-				text-shadow: 1px 0 0;
 			}
 
-            .fl_right {
-            	width: 25%;
-            	vertical-align: bottom;
+            .td_right {
+            	width: 30%;
             	text-align: center;
             	text-shadow: 1px 0 0;
             }
 
-            .thead_color {
-            	background-color: #f7a600;
-            }
-
             img {
-            	width: 40px;
-            	height: 40px;
+            	width: 35px;
+            	height: 35px;
             	float: left;
             }
         </style>
@@ -124,8 +145,8 @@
 				<table>
 				    <thead>
 				        <tr>
-				            <th class="fl_left thead_color"><label>NAME</label></th>
-				            <th class="fl_right thead_color"><img src="poison.svg"><label>KILLS</label></th>
+				            <th class="th_left th_color"><label>NAME</label></th>
+				            <th class="th_right th_color"><img src="poison.svg"><label>KILLS</label></th>
 				        </tr>
 				    </thead>
 				    <tbody>
@@ -136,19 +157,25 @@
 				    			{
 				    				$player = $line["nome_jogador"];
 				    				$kills = $line["sum_qtd_kills"];
+				    				$fontcolor = "";
+
+				    				if($kills < 0)
+				    				{
+				    					$fontcolor = "style='color:#f7a600;'";
+				    				}
 
 				    				if($chave%2==0)
 				    				{
 					    				echo("<tr>");
-					    				echo("<td class='fl_left td_color_1'>$player</td>");
-					    				echo("<td class='fl_right td_color_1'>$kills</td>");
+					    				echo("<td class='td_left td_color_1'>$player</td>");
+					    				echo("<td class='td_right td_color_1' ".$fontcolor.">$kills</td>");
 					    				echo("</tr>");
 					    			}
 					    			else
 					    			{
 					    				echo("<tr>");
-					    				echo("<td class='fl_left td_color_2'>$player</td>");
-					    				echo("<td class='fl_right td_color_2'>$kills</td>");
+					    				echo("<td class='td_left td_color_2'>$player</td>");
+					    				echo("<td class='td_right td_color_2' ".$fontcolor.">$kills</td>");
 					    				echo("</tr>");
 				    				}
 				    			}
