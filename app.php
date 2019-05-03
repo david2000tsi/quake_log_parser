@@ -1,7 +1,12 @@
 <?php
 	include_once 'utils.php';
 
-	$GLOBALS["list"] = getAllPLayersScore();
+	$GLOBALS["list"] = null;
+	$allScore = getAllPLayersScore();
+	if($allScore && !isset($allScore["error"]) && count($allScore) > 0)
+	{
+		$GLOBALS["list"] = $allScore;
+	}
 ?>
 
 <!doctype html>
@@ -151,7 +156,7 @@
 				    </thead>
 				    <tbody>
 				    	<?php
-				    		if(isset($GLOBALS["list"]))
+				    		if(isset($GLOBALS["list"]) && !empty($GLOBALS["list"]))
 				    		{
 				    			foreach($GLOBALS["list"] as $chave => $line)
 				    			{
@@ -179,6 +184,13 @@
 					    				echo("</tr>");
 				    				}
 				    			}
+				    		}
+				    		else
+				    		{
+				    			echo("<tr>");
+			    				echo("<td class='td_left td_color_1'>Empty</td>");
+			    				echo("<td class='td_right td_color_1'>0</td>");
+			    				echo("</tr>");
 				    		}
 				    	?>
 				    </tbody>
