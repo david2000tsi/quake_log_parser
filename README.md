@@ -87,8 +87,26 @@ File used by index.php.
 
 File used as template to develop web app.
 
-## The games.log, poison.svg and template.jpg was copied from:
+### The games.log, poison.svg and template.jpg was copied from:
 
 ```
 https://gist.github.com/labmorales/7ebd77411ad51c32179bd4c912096031
+```
+
+## Check versions bellow and don't forget to fix database password in 'src/Database.php' and 'web/utils.php' files!
+
+Tested in Linux with:
+
+```
+PHP 7.3.2
+PHPUnit 7.5.1
+MySQL 5.7.24
+```
+
+Tested in Windows with:
+
+```
+PHP 7.3.3
+PHPUnit 7.5.9
+MySQL 5.7.20
 ```
