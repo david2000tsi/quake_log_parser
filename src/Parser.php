@@ -80,7 +80,8 @@ class Parser
 		// Get list of matchs from log file.
 		foreach($this->logArr as $line)
 		{
-			if(strpos($line, self::LOG_KEY_INIT_GAME))
+			// Case there is many 'InitGame' key we will skip until find 'ShutdownGame' key.
+			if(!$isGameOpened && strpos($line, self::LOG_KEY_INIT_GAME))
 			{
 				// Match is opened, lets to to start.
 				$isGameOpened = true;
@@ -163,6 +164,9 @@ class Parser
 
 		// Removing duplicated players.
 		$players = array_unique($players);
+
+		// Ordening players by name (alphabetical order).
+		asort($players);
 
 		return $players;
 	}
@@ -405,6 +409,9 @@ class Parser
 				unset($rankingKillModes[$killMode]);
 			}
 		}
+
+		// Ordening kills score in descending order (by quantity).
+		arsort($rankingKillModes);
 
 		return $rankingKillModes;
 	}
