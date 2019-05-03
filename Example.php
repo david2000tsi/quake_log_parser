@@ -8,6 +8,7 @@ class Example
 	private static $parser;
 	private static $matchs;
 	private static $killScoreJson;
+	private static $killScoreByKillModeJson;
 
 	private static $connDatabase;
 
@@ -26,6 +27,14 @@ class Example
 			if(self::$killScoreJson)
 			{
 				echo(self::$killScoreJson);
+				echo("\n");
+			}
+
+			self::$killScoreByKillModeJson = self::$parser->getKillScoreByKillModeJson($match, sprintf("game_%d", ($key + 1)));
+
+			if(self::$killScoreByKillModeJson)
+			{
+				echo(self::$killScoreByKillModeJson);
 				echo("\n");
 			}
 		}
