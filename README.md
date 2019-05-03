@@ -57,14 +57,14 @@ Use the following command to save output in txt file:
 php Example.php > output.txt
 ```
 
-### web/app.php
+### web/index.php
 
 Basic web app to see user list and kill score and find user by name.
 Follow the steps bellow to run app (run Example.php file before to create and populate database):
 
 Change to project path and starts php server:
 ```
-cd <project_path>
+cd <project_path>/web
 php -S <ip>:<port>
 
 ```
@@ -72,16 +72,16 @@ php -S <ip>:<port>
 Open the browser (teste in chrome and forefox) and access with:
 
 ```
-<ip>:<port>/web/app.php (e.g. localhost:8080/web/app.php)
+<ip>:<port> (e.g. localhost:8080)
 ```
 
 ### web/utils.php
 
-File used by app.php.
+File used by index.php.
 
 ### web/poison.svg
 
-File used by app.php.
+File used by index.php.
 
 ### web/template.jpg
 
