@@ -301,6 +301,12 @@ class Parser
 
 			if($killInfo)
 			{
+				// If player kill yourself we will not count it...
+				if($killInfo["killer"] == $killInfo["killed"])
+				{
+					continue;
+				}
+
 				// We will increment each player kill, but if the player was killed by '<world>' his countage will be decremented.
 				if($killInfo["killer"] == self::LOG_KEY_PLAYER_WORLD)
 				{
