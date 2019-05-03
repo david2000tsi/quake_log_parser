@@ -73,7 +73,7 @@
 	}
 
 	// Handle post request from player form.
-	if(isset($_POST))
+	if(isset($_POST) && isset($_POST["moderequest"]))
 	{
 		switch($_POST["moderequest"])
 		{
@@ -83,5 +83,7 @@
 			default:
 				break;
 		}
+
+		unset($_POST);
 	}
 ?>
